@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:geocoding/geocoding.dart';
 
 class GetData {
-  double? longitude;
-  double? latitude;
+  String? longitude;
+  String? latitude;
   String? temp;
   String? description;
   String? humidity;
   String? airSpeed;
   String? main;
+  String? icon;
+  String? cityName;
 
   GetData({
     required this.latitude,
@@ -25,7 +26,9 @@ class GetData {
       //Getting temp and humidity
       Map tempData = data['main'];
       double getTemp = tempData['temp'] - 273.15;
-      String getHumidity = tempData['humidity'].toStringAsFixed(2);
+      String getHumidity = tempData['humidity'].toStringAsFixed(1);
+
+      String getCityName = data['name'];
 
       //Getting wind speed
       Map wind = data['wind'];
@@ -36,15 +39,23 @@ class GetData {
       Map getWeatherMainData = getWeatherData[0];
       String getMainDesc = getWeatherMainData['main'];
       String getDesc = getWeatherMainData['description'];
+      String getIcon = getWeatherMainData['icon'];
 
       //Asigning a velues
-      temp = getTemp.toStringAsFixed(2);
+      temp = getTemp.toStringAsFixed(1);
       description = getDesc;
       humidity = getHumidity;
-      airSpeed = getAirspeed.toStringAsFixed(2);
+      airSpeed = getAirspeed.toStringAsFixed(1);
       main = getMainDesc;
+      icon = getIcon.toString();
+      cityName = getCityName;
     } catch (e) {
-      print(e);
+      temp = "NA";
+      description = "NA";
+      humidity = "NA";
+      airSpeed = "NA";
+      main = "NA";
+      icon = "04n";
     }
   }
 }

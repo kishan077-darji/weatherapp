@@ -15,9 +15,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
   String? main;
   String? description;
   String? airSpeed;
+  String? icon;
+  String? latitudeValue = 23.022505.toString();
+  String? longitudeValue = 72.571365.toString();
+  String? cityName;
 
   void startApp() async {
-    GetData instance = GetData(latitude: 23.0225, longitude: 72.5797);
+    GetData instance =
+        GetData(latitude: latitudeValue, longitude: longitudeValue);
     await instance.getData();
 
     temp = instance.temp;
@@ -25,6 +30,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
     main = instance.main;
     description = instance.description;
     airSpeed = instance.airSpeed;
+    icon = instance.icon;
+    cityName = instance.cityName;
+
     Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, "/home/", arguments: {
@@ -33,53 +41,63 @@ class _LoadingScreenState extends State<LoadingScreen> {
         "mainValue": main,
         "airSpeedValue": airSpeed,
         "humidityValue": humidity,
+        "iconValue": icon,
+        "cityValue": cityName,
       });
     });
   }
 
   @override
   void initState() {
-    startApp();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Map? search = ModalRoute.of(context)!.settings.arguments as Map?;
+    if (search?.isNotEmpty ?? false) {
+      latitudeValue = search!['searchLatitude'];
+      longitudeValue = search['searchLongitude'];
+    }
+    startApp();
     return Scaffold(
         body: Center(
-      child: Container(
-        color: Colors.black87,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/images/weather.png"),
-            const Text(
-              "Weather app",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
+      child: SingleChildScrollView(
+        child: Container(
+          height: 820,
+          color: Colors.black87,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("assets/images/weather.png"),
+              const Text(
+                "Weather app",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Text(
-              "Made by Kishan",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
+              const SizedBox(
+                height: 15,
               ),
-            ),
-            const SizedBox(
-              height: 60,
-            ),
-            const SpinKitWave(
-              color: Colors.white,
-              size: 50.0,
-            ),
-          ],
+              const Text(
+                "Made by Kishan",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(
+                height: 60,
+              ),
+              const SpinKitWave(
+                color: Colors.white,
+                size: 50.0,
+              ),
+            ],
+          ),
         ),
       ),
     ));
